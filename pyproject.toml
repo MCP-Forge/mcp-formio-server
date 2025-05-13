@@ -1,0 +1,13 @@
+[project]
+name = "mcp-formio-server"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "black>=25.1.0",
+    "mcp[cli]>=1.8.1",
+]
+
+[project.scripts]
+mcp-formio-server = "mcp_formio_server.main:main"
