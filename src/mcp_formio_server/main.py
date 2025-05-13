@@ -7,6 +7,115 @@ from config import mcp, AppContext
 from exceptions import FormIOAPIException
 from api.form import get_forms, post_form
 from api.authentication import admin_login, user_login, register_user
+from api.submission import get_form_submissions, post_submission, get_submission
+
+
+@mcp.tool()
+async def create_form_submission(
+    form_id: str, data: dict, token: str, ctx: Context[Any, AppContext]
+) -> Union[dict, CallToolResult]:
+    """
+    Create a new submission for a specific form in the FormIO system.
+
+    This function allows you to create a submission by providing the form ID and
+    the data to be submitted. The data should match the structure defined in the
+    form's schema. The submission will be stored in the FormIO system.
+
+    Args:
+        form_id (str): The ID of the form to which the submission belongs.
+        data (dict): The submission data in JSON format.
+        token (str): The JWT token for authentication.
+
+    Returns:
+        Union[dict, CallToolResult]: A dictionary containing the created submission,
+        or a CallToolResult if the request failed.
+    """
+    base_url = ctx.request_context.lifespan_context.formio_url
+
+    try:
+        data = await post_submission(base_url, form_id, data, token)
+    except FormIOAPIException as e:
+        return CallToolResult(
+            isError=True,
+            content=[
+                TextContent(type="text", text=f"FormIOAPIException API Error: {e}")
+            ],
+        )
+
+    return data
+
+
+@mcp.tool()
+async def load_form_submission(
+    form_id: str, submission_id: str, token: str, ctx: Context[Any, AppContext]
+) -> Union[dict, CallToolResult]:
+    """
+    Retrieve a specific submission from the FormIO API.
+
+    This function allows you to fetch a specific submission for a given form by
+    providing the form ID and submission ID. The retrieved submission data can
+    be used for various purposes, such as displaying or processing the submitted
+    information.
+
+    Args:
+        form_id (str): The ID of the form to which the submission belongs.
+        submission_id (str): The ID of the submission to retrieve.
+        token (str): The JWT token for authentication.
+
+    Returns:
+        Union[dict, CallToolResult]: A dictionary containing the submission data,
+        or a CallToolResult if the request failed.
+    """
+    base_url = ctx.request_context.lifespan_context.formio_url
+
+    try:
+        data = await get_submission(base_url, form_id, submission_id, token)
+    except FormIOAPIException as e:
+        return CallToolResult(
+            isError=True,
+            content=[
+                TextContent(type="text", text=f"FormIOAPIException API Error: {e}")
+            ],
+        )
+
+    return data
+
+
+@mcp.tool()
+async def get_paginated_form_submissions(
+    form_id: str, limit: int, skip: int, token: str, ctx: Context[Any, AppContext]
+) -> Union[dict, CallToolResult]:
+    """
+    Retrieve a paginated list of submissions for a specific form from the FormIO API.
+
+    This function allows you to fetch submissions for a specific form with pagination
+    support. You can specify how many submissions to retrieve and how many to skip,
+    which is useful for implementing paginated listings or navigating through large
+    collections of submissions.
+
+    Args:
+        form_id (str): The ID of the form to which the submissions belong.
+        limit (int): The maximum number of submissions to return.
+        skip (int): The number of submissions to skip (offset).
+        token (str): The JWT token for authentication.
+
+    Returns:
+        Union[dict, CallToolResult]: A dictionary containing the list of submissions and the total count,
+        or a CallToolResult if the request failed.
+    """
+    base_url = ctx.request_context.lifespan_context.formio_url
+
+    try:
+        data = await get_form_submissions(base_url, form_id, limit, skip, token)
+    except FormIOAPIException as e:
+        return CallToolResult(
+            isError=True,
+            content=[
+                TextContent(type="text", text=f"FormIOAPIException API Error: {e}")
+            ],
+        )
+
+    return data
 
 
 @mcp.tool()

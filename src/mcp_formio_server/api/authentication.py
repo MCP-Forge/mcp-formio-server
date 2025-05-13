@@ -1,9 +1,7 @@
 from api.common import safe_request
 
 
-async def admin_login(
-    base_url: str, email: str, password: str
-) -> dict:
+async def admin_login(base_url: str, email: str, password: str) -> dict:
     """
     Authenticate an admin and retrieve a JWT token.
 
@@ -28,9 +26,7 @@ async def admin_login(
     return data
 
 
-async def user_login(
-    base_url: str, email: str, password: str
-) -> dict:
+async def user_login(base_url: str, email: str, password: str) -> dict:
     """
     Authenticate a user and retrieve a JWT token.
 
@@ -55,9 +51,7 @@ async def user_login(
     return data
 
 
-async def register_user(
-    base_url: str, email: str, password: str
-) -> dict:
+async def register_user(base_url: str, email: str, password: str) -> dict:
     """
     Register a new user and retrieve a JWT token.
 
