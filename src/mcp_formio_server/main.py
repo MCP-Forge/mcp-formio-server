@@ -6,7 +6,73 @@ from mcp.types import CallToolResult, TextContent
 from config import mcp, AppContext
 from exceptions import FormIOAPIException
 from api.form import get_forms, post_form
-from api.authentication import admin_login
+from api.authentication import admin_login, user_login, register_user
+
+
+@mcp.tool()
+async def create_user(
+    email: str, password: str, ctx: Context[Any, AppContext]
+) -> Union[dict, CallToolResult]:
+    """
+    Register a new user in the FormIO system.
+
+    This function allows you to create a new user by providing an email and password.
+    The user will be registered in the FormIO system and can then log in using the
+    provided credentials.
+
+    Args:
+        email (str): The email for the new user.
+        password (str): The password for the new user.
+
+    Returns:
+        Union[dict, CallToolResult]: A dictionary containing the user information and JWT token,
+        or a CallToolResult if the request failed.
+    """
+    base_url = ctx.request_context.lifespan_context.formio_url
+    try:
+        data = await register_user(base_url, email, password)
+    except FormIOAPIException as e:
+        return CallToolResult(
+            isError=True,
+            content=[
+                TextContent(type="text", text=f"FormIOAPIException API Error: {e}")
+            ],
+        )
+
+    return data
+
+
+@mcp.tool()
+async def authenticate_user(
+    email: str, password: str, ctx: Context[Any, AppContext]
+) -> Union[dict, CallToolResult]:
+    """
+    Authenticate an user and retrieve a JWT token.
+
+    This function sends a login request to the FormIO API and retrieves a JWT token
+    for subsequent authenticated requests. The token is essential for accessing
+    protected resources in the FormIO system.
+
+    Args:
+        email (str): The email for authentication.
+        password (str): The password for authentication.
+
+    Returns:
+        Union[dict, CallToolResult]: A dictionary containing the JWT token and user information,
+        or a CallToolResult if the request failed.
+    """
+    base_url = ctx.request_context.lifespan_context.formio_url
+    try:
+        token = await user_login(base_url, email, password)
+    except FormIOAPIException as e:
+        return CallToolResult(
+            isError=True,
+            content=[
+                TextContent(type="text", text=f"FormIOAPIException API Error: {e}")
+            ],
+        )
+
+    return token
 
 
 @mcp.tool()
