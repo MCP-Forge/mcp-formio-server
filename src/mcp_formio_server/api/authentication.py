@@ -1,4 +1,4 @@
-from api.common import safe_request
+from mcp_formio_server.api.common import safe_request
 
 
 async def admin_login(base_url: str, email: str, password: str) -> dict:

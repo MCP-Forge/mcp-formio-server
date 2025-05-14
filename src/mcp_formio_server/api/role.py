@@ -1,4 +1,4 @@
-from api.common import safe_request
+from mcp_formio_server.api.common import safe_request
 
 
 async def get_roles(base_url: str, token: str) -> dict:

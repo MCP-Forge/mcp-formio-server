@@ -1,4 +1,4 @@
-from api.common import safe_request
+from mcp_formio_server.api.common import safe_request
 
 
 async def get_forms(base_url: str, limit: int, skip: int) -> dict:

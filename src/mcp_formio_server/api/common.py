@@ -2,7 +2,7 @@ from typing import Any
 
 from httpx import AsyncClient, HTTPStatusError, RequestError
 
-from exceptions import FormIOAPIException
+from mcp_formio_server.exceptions import FormIOAPIException
 
 
 async def safe_request(

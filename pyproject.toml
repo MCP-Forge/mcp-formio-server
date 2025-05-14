@@ -1,6 +1,6 @@
 [project]
 name = "mcp-formio-server"
-version = "0.1.1"
+version = "0.1.5"
 description = "An MCP server for interacting with the FormIO API via Model Context Protocol tools, providing access to forms, submissions, roles, and user management."
 readme = "README.md"
 requires-python = ">=3.13"

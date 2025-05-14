@@ -3,12 +3,12 @@ from typing import Union, Any
 from mcp.server.fastmcp import Context
 from mcp.types import CallToolResult, TextContent
 
-from config import mcp, AppContext
-from exceptions import FormIOAPIException
-from api.form import get_forms, post_form
-from api.authentication import admin_login, user_login, register_user
-from api.submission import get_form_submissions, post_submission, get_submission
-from api.role import get_roles, post_role, update_role
+from mcp_formio_server.config import mcp, AppContext
+from mcp_formio_server.exceptions import FormIOAPIException
+from mcp_formio_server.api.form import get_forms, post_form
+from mcp_formio_server.api.authentication import admin_login, user_login, register_user
+from mcp_formio_server.api.submission import get_form_submissions, post_submission, get_submission
+from mcp_formio_server.api.role import get_roles, post_role, update_role
 
 
 @mcp.tool()
