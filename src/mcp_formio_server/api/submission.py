@@ -57,25 +57,28 @@ async def get_form_submissions(
     return data
 
 
-async def post_submission(base_url: str, form_id: str, data: dict, token: str) -> dict:
+async def post_submission(base_url: str, form_id: str, form_info: dict, token: str) -> dict:
     """
-    Create a new submission for a specific form in the FormIO API.
-
+    Submit a new submission to the FormIO API.  
+    This function allows you to create a new submission for a specific form.
     Args:
         base_url (str): The base URL of the FormIO API.
         form_id (str): The ID of the form to which the submission belongs.
-        data (dict): The submission data to create.
+        form_info (dict): The data for the new submission.
         token (str): The JWT token for authentication.
-
     Returns:
         dict: A dictionary containing the created submission data.
     """
+
     url = f"{base_url}/form/{form_id}/submission"
     headers = {
         "Content-Type": "application/json",
         "x-jwt-token": token,
     }
-    data, _ = await safe_request("POST", url, json=data, headers=headers)
+    post_data = {
+        "data": form_info,
+    }
+    data, _ = await safe_request("POST", url, json=post_data, headers=headers)
     return data
 
 

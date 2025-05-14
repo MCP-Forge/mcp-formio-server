@@ -8,6 +8,109 @@ from exceptions import FormIOAPIException
 from api.form import get_forms, post_form
 from api.authentication import admin_login, user_login, register_user
 from api.submission import get_form_submissions, post_submission, get_submission
+from api.role import get_roles, post_role, update_role
+
+
+@mcp.tool()
+async def create_role(
+    role_info: dict, token: str, ctx: Context[Any, AppContext]
+) -> Union[dict, CallToolResult]:
+    """
+    Create a new role in the FormIO system.
+
+    This function allows you to create a new role by providing a JSON structure
+    that defines the role's properties and permissions. The JSON structure is sent
+    to the FormIO API which then creates and stores the role.
+
+    Args:
+        role_info (dict): The role definition in JSON format.
+        token (str): The JWT token for authentication.
+
+    Returns:
+        Union[dict, CallToolResult]: The created role object on success,
+        or a CallToolResult describing the error.
+    """
+    base_url = ctx.request_context.lifespan_context.formio_url
+
+    try:
+        data = await post_role(base_url, role_info, token)
+    except FormIOAPIException as e:
+        return CallToolResult(
+            isError=True,
+            content=[
+                TextContent(type="text", text=f"FormIOAPIException API Error: {e}")
+            ],
+        )
+
+    return data
+
+
+@mcp.tool()
+async def update_existing_role(
+    role_id: str, role_info: dict, token: str, ctx: Context[Any, AppContext]
+) -> Union[dict, CallToolResult]:
+    """
+    Update an existing role in the FormIO system.
+
+    This function allows you to update an existing role by providing the role ID
+    and a JSON structure that defines the updated properties and permissions.
+    The JSON structure is sent to the FormIO API which then updates the role.
+
+    Args:
+        role_id (str): The ID of the role to update.
+        role_info (dict): The updated role definition in JSON format.
+        token (str): The JWT token for authentication.
+
+    Returns:
+        Union[dict, CallToolResult]: The updated role object on success,
+        or a CallToolResult describing the error.
+    """
+    base_url = ctx.request_context.lifespan_context.formio_url
+
+    try:
+        data = await update_role(base_url, role_id, role_info, token)
+    except FormIOAPIException as e:
+        return CallToolResult(
+            isError=True,
+            content=[
+                TextContent(type="text", text=f"FormIOAPIException API Error: {e}")
+            ],
+        )
+
+    return data
+
+
+@mcp.tool()
+async def get_roles_list(
+    token: str, ctx: Context[Any, AppContext]
+) -> Union[dict, CallToolResult]:
+    """
+    Retrieve a list of roles from the FormIO API.
+
+    This function fetches the roles available in the FormIO system. Roles are
+    used to manage permissions and access control for users and groups within
+    the FormIO platform.
+
+    Args:
+        token (str): The JWT token for authentication.
+
+    Returns:
+        Union[dict, CallToolResult]: A dictionary containing the list of roles,
+        or a CallToolResult if the request failed.
+    """
+    base_url = ctx.request_context.lifespan_context.formio_url
+
+    try:
+        data = await get_roles(base_url, token)
+    except FormIOAPIException as e:
+        return CallToolResult(
+            isError=True,
+            content=[
+                TextContent(type="text", text=f"FormIOAPIException API Error: {e}")
+            ],
+        )
+
+    return data
 
 
 @mcp.tool()
